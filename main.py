@@ -1,14 +1,18 @@
 # Função principal que realiza os itens presentes na descrição do projeto.
-# TODO: melhorar o código
 def main():
     grafo = gerar_grafo('cliques_copas.txt')
-    cliques_maximais = bron_kerbosch(list(grafo.keys()), [], [], grafo)
-    cliques_min_3 = filter(lambda c: len(c) >= 3, cliques_maximais)  # TODO: >3 ou >=3?
+    maximais = cliques_maximais(grafo)
+    cliques_min_3 = [c for c in maximais if len(c) >= 3]  # TODO: >3 ou >=3?
+    print('----------------------------------------------------------------------')
+    print('Cliques acima de 3 vértices:')
 
     for clique in cliques_min_3:
-        print(clique)
+        print(f'{clique} - {len(clique)} vértices')
 
-    print(clique_maximo(cliques_maximais))
+    print('----------------------------------------------------------------------')
+    print(f'Clique máximo: {clique_maximo(maximais)}')
+    print('----------------------------------------------------------------------')
+    print(f'Coeficiente de aglomeração médio: {coeficiente_aglomeracao(grafo)}')
 
 
 # Gera um grafo na representação de lista de adjacência a partir de um arquivo.
@@ -29,11 +33,25 @@ def gerar_grafo(caminho):
     return grafo
 
 
+# Retorna uma lista contendo todos os cliques maximais do grafo.
+def cliques_maximais(grafo):
+    return bron_kerbosch(list(grafo.keys()), [], [], grafo)
+
+
+# Retorna o clique máximo, dados os cliques maximais.
+def clique_maximo(cliques):
+    return max(cliques, key=lambda c: len(c))
+
+
+# Encontra o coeficiente de agrupamento médio do grafo.
+def coeficiente_aglomeracao(grafo):
+    return sum([aglomeracao_vertice(v, grafo) for v in grafo]) / len(grafo)
+
+
 # TODO: Referencia (encontrar um algoritmo aleatorio pra ser a fonte)
-# TODO: comentar saidas intermediarias (?)
-# Aplica o algoritmo Bron-Kerbosch com pivoteamento no grafo para encontrar seus cliques maximais.
 def bron_kerbosch(p, r, x, grafo):
     if len(p) == len(x) == 0:
+        print(r)
         return [r]
 
     pivo = escolher_pivo(p + x, grafo)
@@ -49,8 +67,35 @@ def bron_kerbosch(p, r, x, grafo):
     return resultado
 
 
-def coeficiente_aglomeracao(grafo):
-    pass
+# Escolhe como pivô o vértice da lista 'vertices' de maior grau no grafo.
+def escolher_pivo(vertices, grafo):
+    pivo = vertices[0]
+
+    for vertice in vertices:
+        if grau(vertice, grafo) > grau(pivo, grafo):
+            pivo = vertice
+
+    return pivo
+
+
+# Encontra o coeficiente de aglomeração de um vértice.
+def aglomeracao_vertice(vertice, grafo):
+    v = vizinhos(vertice, grafo)
+    n = grau(vertice, grafo)
+    t = 0
+    verificados = []
+
+    if n < 2:
+        return 0
+
+    for v1 in v:
+        for v2 in complemento(v, verificados + [v1]):
+            if v2 in grafo[v1]:
+                t += 1
+
+        verificados.append(v1)
+
+    return (2 * t) / (n * (n - 1))
 
 
 # Retorna a interseção de duas listas 'a' e 'b'.
@@ -63,20 +108,12 @@ def complemento(a, b):
     return [x for x in a if x not in b]
 
 
-# Retorna o clique máximo, dados os cliques maximais.
-def clique_maximo(cliques):
-    return max(cliques, key=lambda c: len(c))
+# Retorna o grau de um vértice no grafo.
+def grau(vertice, grafo):
+    if vertice not in grafo:
+        return 0
 
-
-# Escolhe como pivô o vértice da lista 'vertices' de maior grau no grafo.
-def escolher_pivo(vertices, grafo):
-    pivo = vertices[0]
-
-    for vertice in vertices:
-        if grau(vertice, grafo) > grau(pivo, grafo):
-            pivo = vertice
-
-    return pivo
+    return len(grafo[vertice])
 
 
 # Retorna os vizinhos de um vértice no grafo.
@@ -85,14 +122,6 @@ def vizinhos(vertice, grafo):
         return []
 
     return grafo[vertice]
-
-
-# Retorna o grau de um vértice no grafo.
-def grau(vertice, grafo):
-    if vertice not in grafo:
-        return 0
-
-    return len(grafo[vertice])
 
 
 # Chamada da função principal. Esse arquivo é um script Python 3.11.

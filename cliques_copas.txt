@@ -1,6 +1,7 @@
 % Este arquivo lista todos os países que atingiram as 4 primeiras posições de todas as 21 copas % do mundo, de 1930 a 2018, indicando como adjacentes caso ocorreram confrontos entre os mesmos % na final, semi-final ou 3. lugar. Dados extraídos de ge.globo.com/futebol/copa-do-mundo
 % (PS. acentos retirados)
 
+% Arquivo foi corrigido para incluir a Alemanha como adjacente da Suécia.
 
 Brasil: Italia, Suecia, Espanha, Uruguai, Franca, Chile, Tchecoslovaquia, Polonia, Turquia, Alemanha, Holanda; 
 Uruguai: Iugoslavia, Argentina, Espanha, Suecia, Brasil, Hungria, Austria, Alemanha, Holanda; 
@@ -10,7 +11,7 @@ Italia: Austria, Tchecoslovaquia, Brasil, Hungria, Alemanha, Polonia, Argentina,
 Alemanha: Tchecoslovaquia, Austria, Hungria, Suecia, Franca, URSS, Inglaterra, Italia, Uruguai, Holanda, Argentina, Coreia_Sul, Brasil, Portugal, Espanha; 
 Tchecoslovaquia: Italia, Alemanha, Iugoslavia, Brasil; 
 Hungria: Suecia, Italia, Uruguai, Alemanha; 
-Suecia: Hungria, Brasil, Uruguai, Espanha, Bulgaria; 
+Suecia: Alemanha, Hungria, Brasil, Uruguai, Espanha, Bulgaria;
 Espanha: Uruguai, Brasil, Suecia, Alemanha, Holanda; 
 Austria: Italia, Alemanha, Uruguai; 
 Franca: Brasil, Alemanha, Polonia, Belgica, Croacia, Portugal, Italia; 
