@@ -1,8 +1,12 @@
-# Função principal que realiza os itens presentes na descrição do projeto.
+# Projeto 1 de Teoria e Aplicação de Grafos 2022/2
+# Henrique Rodrigues Rocha — 211036061
+
+# Python - 3.11
 def main():
     grafo = gerar_grafo('cliques_copas.txt')
     maximais = cliques_maximais(grafo)
-    cliques_min_3 = [c for c in maximais if len(c) >= 3]  # TODO: >3 ou >=3?
+    cliques_min_3 = [c for c in maximais if len(c) >= 3]
+
     print('----------------------------------------------------------------------')
     print('Cliques acima de 3 vértices:')
 
@@ -48,7 +52,8 @@ def coeficiente_aglomeracao(grafo):
     return sum([aglomeracao_vertice(v, grafo) for v in grafo]) / len(grafo)
 
 
-# TODO: Referencia (encontrar um algoritmo aleatorio pra ser a fonte)
+# Aplica o algoritmo Bron-Kerbosch com pivoteamento para encontrar os cliques maximais do grafo.
+# Referência: https://iq.opengenus.org/bron-kerbosch-algorithm/ (modificado para incluir pivoteamento)
 def bron_kerbosch(p, r, x, grafo):
     if len(p) == len(x) == 0:
         print(r)
@@ -69,13 +74,7 @@ def bron_kerbosch(p, r, x, grafo):
 
 # Escolhe como pivô o vértice da lista 'vertices' de maior grau no grafo.
 def escolher_pivo(vertices, grafo):
-    pivo = vertices[0]
-
-    for vertice in vertices:
-        if grau(vertice, grafo) > grau(pivo, grafo):
-            pivo = vertice
-
-    return pivo
+    return max(vertices, key=lambda v: grau(v, grafo))
 
 
 # Encontra o coeficiente de aglomeração de um vértice.
@@ -124,6 +123,6 @@ def vizinhos(vertice, grafo):
     return grafo[vertice]
 
 
-# Chamada da função principal. Esse arquivo é um script Python 3.11.
+# Chamada da função principal (esse arquivo é um script).
 if __name__ == '__main__':
     main()
