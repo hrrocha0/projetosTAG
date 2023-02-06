@@ -10,15 +10,17 @@ def main():
     print('Emparelhamento:')
 
     for escola in emparelhamento:
-        print(f'{escola}: {emparelhamento[escola]}')
+        print(f'{escola}: {" ".join(filter(lambda p: p is not None, emparelhamento[escola]))}')
 
     print('----------------------------------------------------------------------')
-    print(f'82 professores podem ser alocados estavelmente.')
+
+    print(f'{professores_alocados(preferencias, emparelhamento)} professores podem ser alocados estavelmente.')
 
 
 # Gera, a partir de um grafo bipartido com conjuntos independentes de m professores e n escolas, carregado de um
 # arquivo com o mesmo formato que o 'entradaProj2TAG.txt'. O grafo é separado em três dicionários para facilitar a
 # aplicação do algoritmo de emparelhamento.
+# O arquivo foi alterado para remover barras de espaço em excesso e facilitar a leitura.
 def grafo_bipartido(caminho, m, n):
     preferencias = {}
     habilitacoes = {}
@@ -58,36 +60,52 @@ def grafo_bipartido(caminho, m, n):
 def alocar_professores(preferencias, habilitacoes, vagas):
     professores = list(preferencias.keys())
     escolas = list(vagas.keys())
-    emparelhamento = {escola: [] for escola in escolas}
+    emparelhamento = {escola: [None for _ in vagas[escola]] for escola in escolas}
     emparelhado = {professor: False for professor in professores}
+    _preferencias = {p: preferencias[p].copy() for p in professores}
 
     while True:
-        professor = next(filter(lambda p: not emparelhado[p], professores), None)
+        professor = next(filter(lambda p: not emparelhado[p] and len(_preferencias[p]) > 0, professores), None)
 
         if professor is None:
             break
-        if len(preferencias[professor]) == 0:
+
+        habilitacao = habilitacoes[professor]
+
+        for i in [0, 1]:
+            if not emparelhado[professor]:
+                for preferencia in _preferencias[professor]:
+                    if len(vagas[preferencia]) > i:
+                        vaga = vagas[preferencia][i]
+                        p = emparelhamento[preferencia][i]
+
+                        if p is None:
+                            emparelhamento[preferencia][i] = professor
+                            emparelhado[professor] = True
+                            break
+                        if habilitacao == vaga and habilitacoes[p] != vaga:
+                            emparelhamento[preferencia][i] = professor
+                            emparelhado[professor] = True
+                            emparelhado[p] = False
+                            break
+
+        if not emparelhado[professor]:
             emparelhado[professor] = True
-            continue
-
-        preferencia = preferencias[professor][0]
-        emparelhamento[preferencia].append(professor)
-        emparelhado[professor] = True
-
-        if len(emparelhamento[preferencia]) > len(vagas[preferencia]):
-            for p in emparelhamento[preferencia]:
-                if habilitacoes[p] not in vagas[preferencia]:
-                    emparelhamento[preferencia].remove(p)
-                    emparelhado[p] = False
-                    preferencias[p].remove(preferencia)
-                    break
-
-        if len(emparelhamento[preferencia]) > len(vagas[preferencia]):
-            emparelhamento[preferencia].remove(professor)
-            emparelhado[professor] = False
-            preferencias[professor].remove(preferencia)
 
     return emparelhamento
+
+
+# Calcula quantos professores foram alocados estavelmente.
+def professores_alocados(preferencias, emparelhamento):
+    professores_alocados = 0
+
+    for professor in preferencias:
+        for preferencia in preferencias[professor]:
+            if professor in emparelhamento[preferencia]:
+                professores_alocados += 1
+                break
+
+    return professores_alocados
 
 
 # Chamada da função principal (esse arquivo é um script).
