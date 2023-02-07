@@ -73,21 +73,25 @@ def alocar_professores(preferencias, habilitacoes, vagas):
         habilitacao = habilitacoes[professor]
 
         for i in [0, 1]:
-            if not emparelhado[professor]:
-                for preferencia in _preferencias[professor]:
-                    if len(vagas[preferencia]) > i:
-                        vaga = vagas[preferencia][i]
-                        p = emparelhamento[preferencia][i]
+            for preferencia in _preferencias[professor]:
+                if len(vagas[preferencia]) <= i:
+                    continue
 
-                        if p is None:
-                            emparelhamento[preferencia][i] = professor
-                            emparelhado[professor] = True
-                            break
-                        if habilitacao == vaga and habilitacoes[p] != vaga:
-                            emparelhamento[preferencia][i] = professor
-                            emparelhado[professor] = True
-                            emparelhado[p] = False
-                            break
+                vaga = vagas[preferencia][i]
+                p = emparelhamento[preferencia][i]
+
+                if p is None:
+                    emparelhamento[preferencia][i] = professor
+                    emparelhado[professor] = True
+                    break
+                if habilitacao == vaga != habilitacoes[p]:
+                    emparelhamento[preferencia][i] = professor
+                    emparelhado[professor] = True
+                    emparelhado[p] = False
+                    break
+
+            if emparelhado[professor]:
+                break
 
         if not emparelhado[professor]:
             emparelhado[professor] = True
